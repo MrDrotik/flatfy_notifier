@@ -1,5 +1,6 @@
 #!/usr/bin/env /usr/local/bin/python3.9
 import asyncio
+from builtins import EnvironmentError
 import json
 import os
 
@@ -19,6 +20,9 @@ log = getLogger()
 user_chat_ids = [411350834]
 
 
+if "FLATFY_PARAMS" not in os.environ:
+    raise EnvironmentError
+
 async def get_new_articles_from_page(page_number: int, aiohttp_session: ClientSession) -> (list, bool):
     headers = {
         'Accept': '*/*',
@@ -29,33 +33,17 @@ async def get_new_articles_from_page(page_number: int, aiohttp_session: ClientSe
         'Host': 'api.flatfy.io',
         'Origin': 'https://flatfy.lun.ua',
         'Pragma': 'no-cache',
-        'Referer': 'https://flatfy.lun.ua/search?geo_id=1&page=4&room_count=1&section_id=2&sort=insert_time&'
-                   'sub_geo_id=112283&sub_geo_id=112280&sub_geo_id=112286',
+        'Referer': 'https://flatfy.lun.ua/search',
         'TE': 'Trailers',
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0',
     }
     url = f'https://api.flatfy.io/api/realties'
 
-    params = [
-        ('currency', 'UAH'),
-        ('geo_id', '112283'),
-        ('geo_id', '112280'),
-        ('geo_id', '112286'),
-        ('group_collapse', '1'),
-        ('is_without_fee', 'false'),
-        ('lang', 'en'),
-        ('page', page_number),
-        ('price_sqm_currency', 'UAH'),
-        ('price_max', '10000'),
-        ('room_count', '1'),
-        ('section_id', '2'),
-        ('show_with_images', 'true'),
-        ('sort', 'insert_time'),
-        ('sub_geo_id', '112283'),
-        ('sub_geo_id', '112280'),
-        ('sub_geo_id', '112286'),
-    ]
-    client_response = await aiohttp_session.get(url, params=params, headers=headers)
+    client_response = await aiohttp_session.get(
+        url,
+        params=f'page={page_number}&{os.environ["FLATFY_PARAMS"]}',
+        headers=headers
+    )
     page = json.loads(await client_response.text())
     articles = page['data']
     if len(articles) == 0:

@@ -23,6 +23,7 @@ user_chat_ids = [411350834]
 if "FLATFY_PARAMS" not in os.environ:
     raise EnvironmentError
 
+
 async def get_new_articles_from_page(page_number: int, aiohttp_session: ClientSession) -> (list, bool):
     headers = {
         'Accept': '*/*',
@@ -62,8 +63,8 @@ async def get_new_articles_from_page(page_number: int, aiohttp_session: ClientSe
     return new_articles, len(new_article_ids) == len(article_ids) and len(article_ids) == 24
 
 
-def convert_time(article: str) -> str:
-    return dateutil.parser.parse(article)\
+def convert_time(timestamp: str) -> str:
+    return dateutil.parser.parse(timestamp)\
         .replace(tzinfo=timezone.utc)\
         .astimezone(tz=None)\
         .strftime('%Y-%m-%d %H:%M:%S')
@@ -82,7 +83,8 @@ def build_caption(article) -> str:
            f'{(article["area_living"] and int(article["area_living"])) or "-"}/' \
            f'{(article["area_total"] and int(article["area_total"])) or "-"}\n' \
            f'year {article["built_year"] or "-"}\n' \
-           f'floor {article["floor"]}/{article["floor_count"]}\nwalls {article["wall_type_name"]}\n\n' \
+           f'floor {article["floor"]}/{article["floor_count"]}\nwalls {article["wall_type_name"]}\n' \
+           f'agency {article["agency"] if article["agency"] else "none"}\n\n' \
            f'<i>post {convert_time(article["insert_time"])}\nupdate {convert_time(article["download_time"])}</i>'
 
 

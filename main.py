@@ -138,7 +138,7 @@ async def main():
             print(f'Sending notifications...')
         for article in new_articles:
             await send_article_notifies(article, aiohttp_session)
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0.20)
 
         await aiohttp_session.close()
 

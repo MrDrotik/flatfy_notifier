@@ -1,8 +1,6 @@
 #!/usr/bin/env /usr/local/bin/python3.9
 import asyncio
-from builtins import EnvironmentError
 import json
-import os
 from logging import getLogger
 
 import aiohttp
@@ -11,9 +9,9 @@ from datetime import timezone
 import dateutil.parser
 import uvloop
 
-from database import session
-from models import PostedArticles, ScrapFilters
-from utils import send_media_group
+from src.database import session
+from src.models import PostedArticles, ScrapFilters
+from src.telegram_api import send_media_group
 
 log = getLogger(__name__)
 

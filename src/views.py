@@ -4,7 +4,7 @@ import os
 
 from aiohttp import web
 
-from command_handlers import handle_command
+from src.command_handlers import handle_command
 
 
 routes = web.RouteTableDef()

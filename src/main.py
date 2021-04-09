@@ -2,7 +2,7 @@
 from aiohttp import web
 import logging
 
-from views import routes
+from src.views import routes
 
 
 def setup_routes(app):

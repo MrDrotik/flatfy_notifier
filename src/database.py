@@ -1,7 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from models import Base
+from src.models import Base
 
 
 sqlite_filepath = './var/flatfy.db'

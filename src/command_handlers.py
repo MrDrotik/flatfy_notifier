@@ -1,10 +1,10 @@
-import aiohttp
-
-from database import session
-from models import ScrapFilters
 from logging import getLogger
 
-from telegram_api import send_message
+import aiohttp
+
+from src.database import session
+from src.models import ScrapFilters
+from src.telegram_api import send_message
 
 log = getLogger(__name__)
 

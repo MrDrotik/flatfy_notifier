@@ -3,15 +3,18 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY ./requirements.txt /app
-RUN pip install -r requirements.txt
+COPY requirements.txt /app/
+RUN pip3 install -r requirements.txt
 
 
-COPY src/* /app/
+COPY src /app/src
 
-RUN chmod +x /app/main.py
-RUN chmod +x /app/flatfy_articles_parser.py
+RUN mkdir /app/var
 
-ENV PYTHONPATH /app
+RUN chmod +x /app/src/main.py
+RUN chmod +x /app/src/flatfy_articles_parser.py
 
-CMD /app/main.py
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+CMD ["/app/src/main.py"]

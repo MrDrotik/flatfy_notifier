@@ -3,7 +3,7 @@ from logging import getLogger
 import aiohttp
 
 from src.database import session
-from src.models import ScrapFilters
+from src.models import ScrapFilters, Users
 from src.telegram_api import send_message
 
 log = getLogger(__name__)
@@ -20,9 +20,12 @@ async def handle_command(command_text: str, command_args: str, chat_id: int):
         await unknown_command(chat_id)
 
 
-async def add_filter(command_args: str, user_id: int):
-    session.add(ScrapFilters(telegram_user_id=user_id, path=command_args))
-    session.flush()
+async def add_filter(command_arg: str, user_id: int):
+    sender_user = session.query(Users).filter(Users.telegram_user_id == user_id).first()
+    if not sender_user:
+        sender_user = Users(telegram_user_id=user_id)
+        session.add(sender_user)
+    session.add(ScrapFilters(user_id=sender_user.id, path=command_arg))
 
 
 async def del_filter(command_args: str):
@@ -39,7 +42,7 @@ async def list_filters(chat_id: int):
         await send_message(
             aiohttp_session=aiohttp_session,
             chat_id=chat_id,
-            text='\n'.join(f.path for f in filters) if filters else 'filters list is empty'
+            text='\n\n'.join(f.path for f in filters) if filters else 'filters list is empty'
         )
 
 

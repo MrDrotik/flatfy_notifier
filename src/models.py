@@ -1,19 +1,16 @@
 import datetime
 
 from sqlalchemy import Column, Integer, DateTime, Index, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.ext.declarative import declarative_base
 
 
 Base = declarative_base()
 
 
-class ModelBaseMixin:
+class ModelMixin:
 
-    id = Column(Integer, primary_key=True)
-
-    @declared_attr
-    def __tablename__(cls):
-        return cls.__name__.lower()
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    date_created = Column(DateTime, default=datetime.datetime.now)
 
     def keys(self):
         return self.__table__.columns.keys()
@@ -25,9 +22,8 @@ class ModelBaseMixin:
             raise KeyError(key)
 
 
-class PostedArticles(Base, ModelBaseMixin):
+class PostedArticles(Base, ModelMixin):
     __tablename__ = 'posted_articles'
-    date_created = Column(DateTime, default=datetime.datetime.now)
     article_id = Column(Integer, unique=True)
 
 
@@ -35,11 +31,19 @@ Index('posted_articles__id__index', PostedArticles.id)
 Index('posted_articles__article_id__index', PostedArticles.article_id)
 
 
-class ScrapFilters(Base, ModelBaseMixin):
-    __tablename__ = 'url_to_scrap'
-    date_created = Column(DateTime, default=datetime.datetime.now)
+class Users(Base, ModelMixin):
+    __tablename__ = 'users'
     telegram_user_id = Column(Integer)
+
+
+Index('users__id__index', Users.id)
+Index('users__telegram_user_id__index', Users.telegram_user_id)
+
+
+class ScrapFilters(Base, ModelMixin):
+    __tablename__ = 'scrap_filters'
+    user_id = Column(Integer, ForeignKey(Users.id))
     path = Column(String)
 
 
-Index('url_to_scrap__id__index', ScrapFilters.id)
+Index('scrap_filters__id__index', ScrapFilters.id)

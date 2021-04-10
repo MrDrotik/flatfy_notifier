@@ -16,4 +16,4 @@ Session = sessionmaker(bind=engine)
 
 Session.configure()
 
-session = Session()
+session = Session(autocommit=True)

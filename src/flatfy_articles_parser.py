@@ -10,13 +10,12 @@ import dateutil.parser
 import uvloop
 
 from src.database import session
-from src.models import PostedArticles, ScrapFilters
+from src.models import PostedArticles, ScrapFilters, Users
 from src.telegram_api import send_media_group
 
 log = getLogger(__name__)
 
 ARTICLES_COUNT_ON_SEARCH_PAGE = 24
-user_chat_ids = [411350834]
 
 
 async def fetch_new_articles_with_filter(aiohttp_session: ClientSession, scraper_filter: ScrapFilters) -> list:
@@ -118,8 +117,9 @@ async def notify_users_about_new_article(article, aiohttp_session: ClientSession
     ]
 
     media_list[0] = {**media_list[0], 'caption': caption, 'parse_mode': 'HTML'}
-    for user_chat_id in user_chat_ids:
-        await send_media_group(aiohttp_session, user_chat_id, media_list)
+    users = session.query(Users).all()
+    for user in users:
+        await send_media_group(aiohttp_session, user.id, media_list)
 
 
 async def main():

@@ -70,7 +70,7 @@ async def fetch_articles_from_search_page(aiohttp_session: ClientSession, params
         params=f'page={page_number}&{params}',
         headers=headers
     )
-    return json.loads(await client_response.text())
+    return json.loads(await client_response.text())['data']
 
 
 def convert_time(timestamp: str) -> str:
@@ -127,8 +127,8 @@ async def main():
 
     async with aiohttp.ClientSession() as aiohttp_session:
         new_articles = []
-        for filter in scrap_filters:
-            new_articles += fetch_new_articles_with_filter(aiohttp_session, filter)
+        for scrap_filter in scrap_filters:
+            new_articles += fetch_new_articles_with_filter(aiohttp_session, scrap_filter)
 
         if new_articles:
             print(f'Sending notifications...')

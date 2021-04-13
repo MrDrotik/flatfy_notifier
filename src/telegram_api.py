@@ -6,7 +6,7 @@ from logging import getLogger
 from aiohttp import ClientSession
 
 log = getLogger(__name__)
-
+ 
 
 def status_code_checker(func):
     @wraps(func)
@@ -20,6 +20,7 @@ def status_code_checker(func):
     return _wrapper
 
 
+@status_code_checker
 async def send_media_group(
         aiohttp_session: ClientSession,
         user_chat_id: int,
@@ -38,6 +39,7 @@ async def send_media_group(
     return resp
 
 
+@status_code_checker
 async def send_message(
         aiohttp_session: ClientSession,
         chat_id: int,

@@ -98,7 +98,7 @@ def build_caption(article) -> str:
            f'<i>post {convert_time(article["insert_time"])}\nupdate {convert_time(article["download_time"])}</i>'
 
 
-async def notify_users_about_new_article(article, aiohttp_session: ClientSession):
+async def notify_users_about_article(article, aiohttp_session: ClientSession):
     if len(article['images']) == 0:
         log.warning(f'skipped article with id {article["id"]} without images')
         return
@@ -133,7 +133,7 @@ async def main():
         if new_articles:
             print(f'Sending notifications...')
         for article in new_articles:
-            await notify_users_about_new_article(article, aiohttp_session)
+            await notify_users_about_article(article, aiohttp_session)
             await asyncio.sleep(0.20)
 
         await aiohttp_session.close()
